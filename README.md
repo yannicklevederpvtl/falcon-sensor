@@ -71,11 +71,3 @@ This populates the `blobs.yml` with blob filename, filename size, and SHA
 
 * Trigger `Apply Changes` from Ops Manager
 
-
-
-
-sudo /opt/CrowdStrike/falconctl -g --version
-sudo cat /var/vcap/sys/log/falcon-linux-sensor/pre-start.stderr.log
-
- systemctl status falcon-sensor
- systemctl | grep falcon
