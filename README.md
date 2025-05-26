@@ -1,4 +1,4 @@
-# Crowdstrike Bosh release
+# Falcon Sensor Bosh release
 
 * Clone this repository and execute:
 
