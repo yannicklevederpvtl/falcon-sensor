@@ -49,11 +49,6 @@ This populates the `blobs.yml` with blob filename, filename size, and SHA
   bosh create-release --final --force --tarball=falcon-sensor.tgz
   ```
 
-* Update the file under `runtime-config > falcon.yml` file and update the version number, from the output of the previous command
-  ```
-  version: 1
-  ```
-
 * Upload the bosh Release
   ```
   bosh upload-release falcon-sensor.tgz
