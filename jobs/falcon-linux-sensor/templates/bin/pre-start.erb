@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+set -u # report the usage of uninitialized variables
+
+exec 1>> /var/vcap/sys/log/falcon-linux-sensor/pre-start.stdout.log
+exec 2>> /var/vcap/sys/log/falcon-linux-sensor/pre-start.stderr.log
+
+FALCON_ARGS=""
+<% if p("falcon.cid", nil) -%>
+FALCON_ARGS+=" --cid=<%= p('falcon.cid') %>"
+<% end -%>
+<% if p("falcon.provisioning_token", nil) -%>
+FALCON_ARGS+=" --provisioning-token=<%= p('falcon.provisioning_token') %>"
+<% end -%>
+<% if p("falcon.tags", nil) -%>
+FALCON_ARGS+=" --tags=<%= p('falcon.tags') %>"
+<% end -%>
+
+if [[ ! -f /opt/CrowdStrike/falconctl ]]; then
+    FALCON_PROXY_ARGS=""
+    export FALCON_CLIENT_ID="<%= p('oauth.client_id') %>"
+    export FALCON_CLIENT_SECRET="<%= p('oauth.client_secret') %>"
+<% if p("oauth.cloud", nil) -%>
+    export FALCON_CLOUD="<%= p('oauth.cloud') %>"
+<% end -%>
+<% if p("falcon.sensor_update_policy", nil) -%>
+    export FALCON_SENSOR_UPDATE_POLICY_NAME="<%= p('falcon.sensor_update_policy') %>"
+<% end -%>
+<% if p("falcon.apd", nil) -%>
+    FALCON_PROXY_ARGS+=" --disable-proxy"
+<% end -%>
+<% if p("falcon.app", nil) -%>
+    FALCON_PROXY_ARGS+=" --proxy-port=<%= p('falcon.app') %>"
+<% end -%>
+<% if p("falcon.aph", nil) -%>
+    FALCON_PROXY_ARGS+=" --proxy-host=<%= p('falcon.aph') %>"
+<% end -%>
+
+    /var/vcap/packages/falcon-linux-sensor/falcon-installer --user-agent="falcon-boshrelease/<%= p('version') %>" --verbose --enable-file-logging --tmpdir /var/vcap/sys/log/falcon-linux-sensor/ ${FALCON_ARGS}${FALCON_PROXY_ARGS}
+fi
+
+if [[ -f /opt/CrowdStrike/falconctl ]]; then
+<% if p("falcon.apd", nil) -%>
+    FALCON_ARGS+=" --apd=<%= p('falcon.apd') %>"
+<% end -%>
+<% if p("falcon.aph", nil) -%>
+    FALCON_ARGS+=" --apd=false %>"
+    FALCON_ARGS+=" --aph=<%= p('falcon.aph') %>"
+<% end -%>
+<% if p("falcon.app", nil) -%>
+    FALCON_ARGS+=" --app=<%= p('falcon.app') %>"
+<% end -%>
+
+    if [ -n "$FALCON_ARGS" ] ; then
+        /opt/CrowdStrike/falconctl -s -f ${FALCON_ARGS}
+    fi
+fi

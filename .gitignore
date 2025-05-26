@@ -1,0 +1,4 @@
+blobs/
+config/
+*.deb
+falcon-installer

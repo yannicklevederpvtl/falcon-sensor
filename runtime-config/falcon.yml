@@ -1,0 +1,27 @@
+releases:
+- name: falcon-sensor
+  version: (( version ))
+addons:
+- name: falcon-linux-sensor
+  jobs:
+  - name: falcon-linux-sensor
+    release: falcon-sensor
+    properties:
+      oauth:
+        client_id: (( client_id ))
+        client_secret: (( client_secret ))
+        cloud: (( cloud ))
+      falcon:
+        cid: (( cid ))
+        apd: (( apd ))
+        aph: (( aph ))
+        app: (( app ))
+        provisioning_token: (( provisioning_token ))
+        tags: (( tags ))
+        sensor_update_policy: (( sensor_update_policy ))
+      version: (( version ))
+  include:
+    stemcell:
+    - os: ubuntu-jammy
+    - os: ubuntu-bionic
+    - os: ubuntu-xenial
